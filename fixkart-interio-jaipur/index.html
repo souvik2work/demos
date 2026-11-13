@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Fixkart Interio, Jaipur (demo)</title>
+<meta name="description" content="Fixkart Interio designs and builds flat, villa and living room interiors across Jaipur, with a team that listens first and hands over when promised.">
+<meta name="theme-color" content="#141414">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFFFFF;--ink:#141414;--muted:#5A5A5A;--accent:#E2552B;--soft:#FBEAE3;--dark:#141414;--on:#FFFFFF;
+--hf:'Archivo Black',Georgia,serif;--bf:'Archivo',system-ui,sans-serif;--line:rgba(0,0,0,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--bf);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}a{color:inherit}
+h1,h2,h3{font-family:var(--hf);line-height:1.08;margin:0;font-weight:400;text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.demo-bar{background:var(--dark);color:rgba(255,255,255,.78);font-size:13px;text-align:center;padding:8px 16px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;max-width:1180px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.mark{width:42px;height:42px;border-radius:10px;background:var(--accent);color:var(--on);display:grid;place-items:center;font-family:var(--hf);font-size:18px;flex:none}
+.brand b{display:block;font-family:var(--hf);font-size:19px;line-height:1.1;font-weight:400}
+.brand small{display:block;color:var(--muted);font-size:13px}
+.links{display:flex;gap:26px;font-size:15px}.links a{text-decoration:none;color:var(--muted)}.links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:12px 22px;border-radius:6px;background:var(--accent);color:var(--on);text-decoration:none;font-weight:600;font-size:16px;border:2px solid var(--accent);cursor:pointer;font-family:var(--bf)}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost.light{color:#fff;border-color:rgba(255,255,255,.5)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.hero h1{font-size:clamp(40px,5.6vw,72px)}
+.lede{font-size:19px;color:var(--muted);max-width:560px;margin:22px 0 30px}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.hero-split{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:72px 24px 80px}
+.hero-split.rev .htext{order:2}
+.hero-split .himg{border-radius:4px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.hero-split .himg img{width:100%;height:100%;object-fit:cover}
+.hero-full{position:relative;min-height:min(86vh,760px);display:flex;align-items:flex-end;color:#fff;overflow:hidden}
+.hero-full img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-full::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.35) 45%,#141414EE 100%)}
+.hero-full .wrap{position:relative;z-index:1;padding-top:120px;padding-bottom:72px;width:100%}
+.hero-full .lede{color:rgba(255,255,255,.85)}.hero-full .eyebrow{color:#fff;opacity:.85}
+.hero-full h1{max-width:860px}
+.hero-stacked{text-align:center;padding:80px 24px 0}
+.hero-stacked .lede{margin-left:auto;margin-right:auto}.hero-stacked .actions{justify-content:center}
+.hero-stacked h1{max-width:900px;margin:0 auto}
+.hero-stacked .himg{margin:56px auto 0;max-width:1180px;border-radius:28px 28px 0 0;overflow:hidden;aspect-ratio:21/9}
+.hero-stacked .himg img{width:100%;height:100%;object-fit:cover}
+.trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--soft)}
+.trust .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding-top:22px;padding-bottom:22px}
+.trust div{display:flex;flex-direction:column;gap:2px}.trust b{font-size:17px}.trust span{color:var(--muted);font-size:14px}
+.trust a{text-decoration:none}.stars{color:#F5B301;letter-spacing:2px}
+section{padding:96px 0}
+.sec-head{max-width:640px;margin-bottom:48px}.sec-head h2{font-size:clamp(32px,4vw,48px)}
+.sec-head p{color:var(--muted);margin:14px 0 0}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:28px}
+.card .n{font-family:var(--hf);color:var(--accent);font-size:15px;font-weight:600;margin-bottom:18px;display:block}
+.card h3{font-size:22px;margin-bottom:10px;font-family:var(--bf);font-weight:700;text-transform:none;letter-spacing:0;}
+.card p{margin:0;color:var(--muted);font-size:16px}
+.about{background:var(--dark);color:#fff}
+.about .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.about .pic{border-radius:4px;overflow:hidden;aspect-ratio:1/1}
+.about .pic img{width:100%;height:100%;object-fit:cover}
+.about h2{font-size:clamp(32px,4vw,48px);margin-bottom:20px}
+.about p{color:rgba(255,255,255,.78);margin:0 0 28px}
+.about .eyebrow{color:#E2552B}
+.ticks{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.ticks li{display:flex;gap:12px;align-items:flex-start}
+.ticks li::before{content:"";flex:none;width:22px;height:22px;margin-top:2px;border-radius:50%;background:#E2552B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/14px no-repeat}
+.gallery{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:260px 260px;gap:14px}
+.gallery figure{margin:0;overflow:hidden;border-radius:4px}
+.gallery figure:first-child{grid-row:span 2}.gallery figure:nth-child(4){grid-column:span 2}
+.gallery img{width:100%;height:100%;object-fit:cover;transition:transform .6s}.gallery figure:hover img{transform:scale(1.04)}
+.gnote{color:var(--muted);font-size:13px;margin-top:12px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:st}
+.step{border-top:3px solid var(--accent);padding-top:22px}
+.step::before{counter-increment:st;content:"0" counter(st);font-family:var(--hf);font-size:44px;color:var(--accent);display:block;margin-bottom:10px;line-height:1}
+.step b{font-size:20px}
+.visit .grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.hours{width:100%;border-collapse:collapse;margin:20px 0 28px}
+.hours td{padding:12px 0;border-bottom:1px solid var(--line)}.hours td:last-child{text-align:right;color:var(--muted)}
+.addr{color:var(--muted);margin:0 0 22px}
+.map{border-radius:6px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/10;margin-top:8px}
+.map iframe{width:100%;height:100%;border:0;}
+form{background:#fff;border:1px solid var(--line);border-radius:6px;padding:32px;display:grid;gap:16px;align-self:start}
+form h3{font-size:26px;font-family:var(--bf);font-weight:700;text-transform:none;}
+label{display:grid;gap:6px;font-size:14px;font-weight:600}
+input,select,textarea{font:inherit;font-size:16px;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:96px;resize:vertical}
+.fnote{font-size:13px;color:var(--muted);margin:0}
+footer{background:var(--dark);color:rgba(255,255,255,.7);padding:40px 0;font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+footer a{color:#fff}
+.fab{position:fixed;right:18px;bottom:18px;z-index:30;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+@media (max-width:900px){
+ .links{display:none}.hero-split{grid-template-columns:1fr;gap:36px;padding:48px 24px 56px}.hero-split.rev .htext{order:0}
+ .hero-split .himg{aspect-ratio:4/3}.trust .wrap{grid-template-columns:1fr;gap:14px}
+ .cards,.steps,.about .grid,.visit .grid{grid-template-columns:1fr}section{padding:68px 0}
+ .gallery{grid-template-columns:1fr 1fr;grid-template-rows:200px 200px 200px}.gallery figure:first-child{grid-column:span 2;grid-row:auto}.gallery figure:nth-child(4){grid-column:span 2}
+ .hero-stacked .himg{aspect-ratio:4/3}.nav .btn{padding:10px 14px;font-size:14px}
+}
+</style></head>
+<body>
+<div class="demo-bar">Demo concept by Souvik Biswas. Not affiliated with or endorsed by Fixkart Interio.</div>
+<header><div class="nav"><a class="brand" href="#"><span class="mark">FI</span><span><b>Fixkart Interio</b><small>Kalwar Road, Jaipur</small></span></a>
+<nav class="links" aria-label="Main"><a href="#services">What we design</a><a href="#about">About</a><a href="#work">Gallery</a><a href="#visit">Visit</a></nav>
+<a class="btn" href="https://wa.me/917737966778?text=Hello%20Fixkart%20Interio%2C%20I%20found%20you%20online%20and%20would%20like%20to%20know%20more.">WhatsApp us</a></div></header>
+<main><section class="hero" style="padding:0"><div class="wrap hero-split" style="padding-left:24px;padding-right:24px"><div class="htext"><div class="eyebrow">Flat and villa interiors, Jaipur</div><h1>Bold designs. Finished on time.</h1><p class="lede">Fixkart Interio designs and builds flat, villa and living room interiors across Jaipur, with a team that listens first and hands over when promised.</p><div class="actions"><a class="btn" href="https://wa.me/917737966778?text=Hello%20Fixkart%20Interio%2C%20I%20found%20you%20online%20and%20would%20like%20to%20know%20more.">Get a design consultation</a><a class="btn ghost" href="tel:+917737966778">Call +91 77379 66778</a></div></div><div class="himg"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=75" srcset="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=640&q=75 640w, https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1024&q=75 1024w, https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=75 1600w" sizes="(max-width:900px) 100vw, 50vw" alt="Interior design" fetchpriority="high"></div></div></section><div class="trust"><div class="wrap">
+<div><a href="https://www.google.com/maps/search/?api=1&query=Fixkart%20Interio&query_place_id=ChIJaYS_ZS6zbTkRdzLlr15tJNs" target="_blank" rel="noopener"><b><span class="stars">★★★★★</span> 4.9</b></a><span>291 reviews on Google</span></div>
+<div><b>By appointment</b><span>Every day</span></div>
+<div><b>Kalwar Road, Jaipur</b><span><a href="#visit">Directions and map</a></span></div>
+</div></div><section id="services"><div class="wrap"><div class="sec-head"><div class="eyebrow">What we design</div><h2>From one room to the whole home</h2></div><div class="cards"><div class="card"><span class="n">01</span><h3>Flat interiors</h3><p>2, 3 and 4 BHK interiors from design to final finish.</p></div><div class="card"><span class="n">02</span><h3>Villa interiors</h3><p>Larger homes planned room by room with one consistent look.</p></div><div class="card"><span class="n">03</span><h3>Living room themes</h3><p>Feature walls, lighting and furniture that make the room.</p></div><div class="card"><span class="n">04</span><h3>Turnkey execution</h3><p>Carpentry, false ceiling, paint and electricals by one team.</p></div></div></div></section><section class="about" id="about"><div class="wrap grid">
+<div class="pic"><img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=75" srcset="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=640&q=75 640w, https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1024&q=75 1024w, https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=75 1600w" sizes="(max-width:900px) 100vw, 50vw" alt="Interior design" loading="lazy"></div>
+<div><div class="eyebrow">How we work</div><h2>Delivered when promised</h2><p>Clients mention projects completed within about 45 to 50 days, a superb finish, and a team that sticks to time. Designs are unique and bold, and the team keeps listening to requirements through the whole project.</p><ul class="ticks"><li>Typical full-home timelines of about 45 to 50 days</li><li>Design and execution by one team</li><li>Based on Kalwar Road, Jaipur</li></ul></div>
+</div></section><section id="work"><div class="wrap"><div class="sec-head"><div class="eyebrow">Gallery</div><h2>Inspiration for your project</h2></div><div class="gallery"><figure><img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=75" alt="Interior design example" loading="lazy"></figure><figure><img src="https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=900&q=75" alt="Interior design example" loading="lazy"></figure><figure><img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=75" alt="Interior design example" loading="lazy"></figure><figure><img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=75" alt="Interior design example" loading="lazy"></figure></div><p class="gnote">Placeholder photos for this demo. Your own project photos go here.</p></div></section><section class="visit" id="visit" style="background:var(--soft)"><div class="wrap grid">
+<div><div class="eyebrow">Visit</div><h2 style="font-size:clamp(32px,4vw,46px)">Find us in Kalwar Road</h2>
+<table class="hours"><tr><td>Every day</td><td>By appointment</td></tr></table><p class="addr">Vinayak Enclave, Plot 222, Rawan Gate Rd, Kalwar, Jaipur, Rajasthan 302012</p>
+<div class="actions"><a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=Fixkart%20Interio&query_place_id=ChIJaYS_ZS6zbTkRdzLlr15tJNs" target="_blank" rel="noopener">Open in Google Maps</a><a class="btn ghost" href="tel:+917737966778">+91 77379 66778</a></div>
+<div class="map"><iframe src="https://maps.google.com/maps?q=26.9470245,75.7204365&z=15&output=embed" loading="lazy" title="Map showing Fixkart Interio"></iframe></div></div>
+<form id="enq" onsubmit="return sendWA(event)">
+<h3>Tell us about your space</h3>
+<label>Your name<input name="name" required autocomplete="name"></label>
+<label>Project type<select name="topic"><option>Flat interiors</option><option>Villa interiors</option><option>Living room themes</option><option>Turnkey execution</option><option>Something else</option></select></label>
+<label>Message<textarea name="msg" placeholder="Anything we should know?"></textarea></label>
+<button class="btn" type="submit">Send on WhatsApp</button>
+<p class="fnote">Opens WhatsApp with your message ready to send to +91 77379 66778.</p></form></div></section></main>
+<footer><div class="wrap"><span>Fixkart Interio · Kalwar Road, Jaipur · <a href="tel:+917737966778">+91 77379 66778</a></span><span>Demo website concept by Souvik Biswas. Photos: Unsplash.</span></div></footer>
+<a class="fab" href="https://wa.me/917737966778?text=Hello%20Fixkart%20Interio%2C%20I%20found%20you%20online%20and%20would%20like%20to%20know%20more." aria-label="Chat on WhatsApp"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.7-.3-2.1-.9-3-2.6-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3 1 2.5c.1.2 1.6 2.5 4 3.5 1.5.6 2 .7 2.8.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg></a><script>function sendWA(ev){ev.preventDefault();var f=ev.target;var t='Hello Fixkart Interio, my name is '+f.name.value+'. Project type: '+f.topic.value+'.'+(f.msg.value?' '+f.msg.value:'');window.open('https://wa.me/917737966778?text='+encodeURIComponent(t),'_blank');return false;}</script>
+</body></html>
