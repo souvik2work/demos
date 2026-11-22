@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1f4e79">
+<title>Card Dues Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}[hidden]{display:none!important}
+/* Layout: compact single column. Cash summary on top, rent row, then one tight row-pair per card */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --line:#d5dbe2; --fg:#16202b; --muted:#5d6b7a;
+  --accent:#1f4e79; --cash:#1f4e79; --full:#13795b; --full-bg:#e2f3ec; --min:#9a5b00; --min-bg:#fbefd9;
+  --short:#b42318; --short-bg:#fde8e6;
+  --f-body:"Familjen Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-num:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f151c; --surface:#18212b; --line:#2a3642; --fg:#e6ecf2; --muted:#93a2b1;
+  --accent:#7fb2e5; --cash:#1d3f60; --full:#4fd1a1; --full-bg:#123128; --min:#f1b552; --min-bg:#33260f;
+  --short:#ff8a7a; --short-bg:#3a1714; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151c; --surface:#18212b; --line:#2a3642; --fg:#e6ecf2; --muted:#93a2b1;
+  --accent:#7fb2e5; --cash:#1d3f60; --full:#4fd1a1; --full-bg:#123128; --min:#f1b552; --min-bg:#33260f;
+  --short:#ff8a7a; --short-bg:#3a1714; color-scheme:dark}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.35}
+.wrap{max-width:520px;margin:0 auto;padding-block:12px 32px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:10px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{margin:0;font-size:1.2rem;font-weight:700;letter-spacing:-.01em}
+.mnav{display:flex;align-items:center;gap:2px}
+.mnav button{border:1px solid var(--line);background:var(--surface);color:var(--fg);width:32px;height:32px;border-radius:8px;font-size:1.1rem;cursor:pointer;line-height:1}
+.mnav button:disabled{opacity:.35;cursor:default}
+.month{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;min-width:76px;text-align:center}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+
+/* Cash + summary */
+.cash{background:var(--cash);color:#fff;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.cash .lbl{color:rgba(255,255,255,.75)}
+.money-in{display:flex;align-items:center;gap:6px;border-bottom:1.5px solid rgba(255,255,255,.45)}
+.money-in label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600;color:rgba(255,255,255,.75);white-space:nowrap}
+.money-in span{font-family:var(--f-num);font-size:1.2rem;opacity:.8;margin-left:auto}
+.money-in input{width:9ch;flex:1;min-width:0;text-align:right;background:transparent;border:0;color:inherit;font-family:var(--f-num);font-size:1.4rem;font-weight:700;padding:2px 0;outline:none}
+.money-in input::placeholder{color:rgba(255,255,255,.5)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stats div{display:flex;flex-direction:column;gap:1px;min-width:0}
+.stats b{font-family:var(--f-num);font-size:1rem;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg{font-size:.82rem;padding:5px 8px;border-radius:6px;font-weight:600}
+.msg.ok{background:var(--full-bg);color:var(--full)}
+.msg.mid{background:var(--min-bg);color:var(--min)}
+.msg.bad{background:var(--short-bg);color:var(--short)}
+.msg.idle{background:rgba(255,255,255,.14);color:#fff}
+.sums{display:flex;justify-content:space-between;gap:8px;font-size:.74rem;color:rgba(255,255,255,.75);flex-wrap:wrap}
+
+/* Rows (rent + cards) */
+.sec{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin:4px 2px -4px}
+.list{display:flex;flex-direction:column;gap:6px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 10px;display:flex;flex-direction:column;gap:6px}
+.row.paid{background:var(--full-bg);border-color:transparent}
+.top{display:flex;align-items:center;gap:6px}
+.top .name{flex:1;min-width:0;font-family:var(--f-body);font-size:.98rem;font-weight:600;border:0;border-bottom:1px dashed var(--line);background:transparent;color:var(--fg);padding:2px 0;outline:none}
+.top .name:focus{border-bottom-color:var(--accent)}
+.top .fixed{flex:1;font-weight:600;font-size:.98rem}
+.chip{font-size:.72rem;font-weight:700;padding:3px 7px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.c-full{background:var(--full-bg);color:var(--full)}
+.c-min{background:var(--min-bg);color:var(--min)}
+.c-short{background:var(--short-bg);color:var(--short)}
+.c-none{background:var(--bg);color:var(--muted)}
+.c-paid{background:var(--full);color:var(--surface)}
+.tick{border:1.5px solid var(--line);background:var(--surface);color:var(--muted);height:30px;padding:0 9px;border-radius:8px;font-family:var(--f-body);font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.tick[aria-pressed="true"]{background:var(--full);border-color:var(--full);color:var(--surface)}
+.del{border:0;background:transparent;color:var(--muted);font-size:1.15rem;width:28px;height:30px;border-radius:6px;cursor:pointer;padding:0}
+.del:hover,.del:focus-visible{background:var(--bg);color:var(--short)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fields.one{grid-template-columns:1fr}
+.f{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:7px;background:var(--bg);padding:0 8px}
+.f:focus-within{border-color:var(--accent)}
+.f label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;white-space:nowrap}
+.f input{flex:1;min-width:0;width:100%;text-align:right;font-family:var(--f-num);font-size:.98rem;padding:7px 0;border:0;background:transparent;color:var(--fg);outline:none}
+.row.paid .f{background:var(--surface)}
+.row.paid .fields.dim{opacity:.55}
+.warn{font-size:.74rem;color:var(--min)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{--tbg:#3a4656;--tfg:#fff;position:relative;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:5px;min-width:0;
+  color:var(--tfg);background:linear-gradient(135deg, color-mix(in srgb, var(--tbg) 100%, #fff 0%) 0%, color-mix(in srgb, var(--tbg) 78%, #000) 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.tile .ttop{display:flex;align-items:center;gap:4px}
+.tile .name{flex:1;min-width:0;font-family:var(--f-body);font-size:.88rem;font-weight:700;border:0;border-bottom:1px dashed color-mix(in srgb, var(--tfg) 40%, transparent);background:transparent;color:var(--tfg);padding:1px 0;outline:none}
+.tile .name::placeholder{color:color-mix(in srgb, var(--tfg) 55%, transparent)}
+.tile .dot{position:relative;width:20px;height:20px;border-radius:50%;border:2px solid color-mix(in srgb, var(--tfg) 70%, transparent);background:var(--tbg);flex:none;overflow:hidden;cursor:pointer}
+.tile .dot input{position:absolute;inset:-6px;opacity:0;cursor:pointer;width:40px;height:40px;border:0;padding:0}
+.tile .del{color:var(--tfg);opacity:.7;width:22px;height:24px;font-size:1rem}
+.tile .del:hover,.tile .del:focus-visible{background:rgba(0,0,0,.2);color:var(--tfg);opacity:1}
+.tile .tf{display:flex;align-items:center;gap:4px;border-radius:6px;padding:0 6px;background:color-mix(in srgb, var(--tfg) 16%, transparent)}
+.tile .tf:focus-within{outline:2px solid var(--tfg);outline-offset:-1px}
+.tile .tf label{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;opacity:.8;white-space:nowrap}
+.tile .tf input{flex:1;min-width:0;width:100%;text-align:right;font-family:var(--f-num);font-size:.86rem;padding:5px 0;border:0;background:transparent;color:var(--tfg);outline:none}
+.tile .tf input::placeholder{color:color-mix(in srgb, var(--tfg) 50%, transparent)}
+.tile .tbot{display:flex;align-items:center;gap:4px}
+.tile .chip{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;text-align:center;background:var(--surface);font-size:.68rem;padding:4px 5px}
+.tile .chip.c-none{background:color-mix(in srgb, var(--tfg) 16%, transparent);color:var(--tfg)}
+.tile .tick{height:24px;padding:0 7px;font-size:.7rem;border:1.5px solid color-mix(in srgb, var(--tfg) 60%, transparent);background:transparent;color:var(--tfg)}
+.tile .tick[aria-pressed="true"]{background:var(--full);border-color:var(--full);color:#fff}
+.tile.paid{opacity:.62}
+.tile.paid::after{content:"✓";position:absolute;right:8px;bottom:34px;font-size:1.6rem;font-weight:700;opacity:.35;pointer-events:none}
+.tile .warn{color:var(--tfg);opacity:.85;font-size:.64rem}
+
+.actions{display:flex;gap:8px}
+button.btn{flex:1;font-family:var(--f-body);font-size:.92rem;font-weight:600;padding:10px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+button.btn.primary{border:1px dashed var(--accent);color:var(--accent);background:transparent}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.note{font-size:.72rem;color:var(--muted);margin:0}
+.linkbtn{background:none;border:0;color:var(--muted);font-family:var(--f-body);font-size:.75rem;text-decoration:underline;cursor:pointer;padding:4px}
+.linkbtn.danger{color:var(--short)}
+.example{font-size:.76rem;color:var(--min);background:var(--min-bg);padding:6px 8px;border-radius:6px}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>Card Dues</h1>
+    <div class="mnav"><button type="button" id="prevM" aria-label="Previous month">‹</button><span class="month" id="month"></span><button type="button" id="nextM" aria-label="Next month">›</button></div>
+  </header>
+
+  <div class="example" id="exampleNote">Example numbers. Type over them with your own.</div>
+
+  <section class="cash" aria-live="polite">
+    <div class="money-in"><label for="money">Money I have</label><span>₹</span><input id="money" inputmode="decimal" placeholder="0" autocomplete="off"></div>
+    <div class="stats">
+      <div><span class="lbl">Still to pay</span><b id="toPay">—</b></div>
+      <div><span class="lbl">Paid</span><b id="paidSum">₹0</b></div>
+      <div><span class="lbl">Left over</span><b id="leftOver">—</b></div>
+    </div>
+    <div class="msg idle" id="msg">Enter money you have.</div>
+    <div class="sums"><span>Rent <b class="num" id="sumRent">₹0</b></span><span>Min <b class="num" id="sumMin">₹0</b></span><span>Total <b class="num" id="sumTot">₹0</b></span></div>
+  </section>
+
+  <div class="sec">Rent</div>
+  <div class="row" id="rentRow">
+    <div class="top">
+      <span class="fixed">Rent</span>
+      <span class="chip c-none" id="rentChip">—</span>
+      <button class="tick" type="button" id="rentTick" aria-pressed="false">Paid</button>
+    </div>
+    <div class="fields one"><div class="f"><label for="rentAmt">Amount ₹</label><input id="rentAmt" inputmode="decimal" placeholder="0" autocomplete="off"></div></div>
+  </div>
+
+  <div class="sec">Cards</div>
+  <section class="grid" id="cards"></section>
+
+  <div class="actions">
+    <button class="btn primary" id="add" type="button">+ Add card</button>
+    <button class="btn" id="newMonth" type="button">+ New month</button>
+  </div>
+  <div class="foot">
+    <p class="note">Saved on this phone only. Colours set from card name. Tap the dot to change.</p>
+    <button class="linkbtn" id="delMonth" type="button">Delete this month</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY = "card-dues-v1", KEY2 = "card-dues-v2";
+  var EXAMPLE = {money:"60000", example:true, rent:{amt:"18000",paid:true}, cards:[
+    {id:1,name:"HDFC Regalia",min:"2500",total:"31200"},
+    {id:2,name:"SBI SimplyClick",min:"800",total:"9400",paid:true,paidAmt:"9400"},
+    {id:3,name:"Amazon ICICI",min:"600",total:"6100"}
+  ]};
+  function keyOf(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
+  function shiftKey(k,n){ var a=k.split("-"); return keyOf(new Date(+a[0], +a[1]-1+n, 1)); }
+  function labelOf(k){ var a=k.split("-"); return new Date(+a[0], +a[1]-1, 1).toLocaleDateString("en-IN",{month:"short",year:"numeric"}); }
+
+  var book = null;
+  try{ book = JSON.parse(localStorage.getItem(KEY2)); }catch(e){ book = null; }
+  if(!book || !book.months || !book.cur || !book.months[book.cur]){
+    var old = null;
+    try{ old = JSON.parse(localStorage.getItem(KEY)); }catch(e){ old = null; }
+    if(!old || !Array.isArray(old.cards)) old = JSON.parse(JSON.stringify(EXAMPLE));
+    var k0 = keyOf(new Date()); book = {cur:k0, months:{}}; book.months[k0] = old;
+  }
+  // Fill in fields added later, without touching saved values.
+  Object.keys(book.months).forEach(function(k){
+    var m = book.months[k];
+    if(!m.rent) m.rent = {amt:"", paid:false};
+    if(!Array.isArray(m.cards)) m.cards = [];
+  });
+  var state = book.months[book.cur];
+  var nextId = Object.keys(book.months).reduce(function(m,k){
+    return book.months[k].cards.reduce(function(mm,c){return Math.max(mm,c.id||0);},m);},0)+1;
+  function keys(){ return Object.keys(book.months).sort(); }
+
+  var $ = function(id){return document.getElementById(id);};
+  var fmt = new Intl.NumberFormat("en-IN",{maximumFractionDigits:2});
+  function rs(n){ return "₹" + fmt.format(Math.round(n*100)/100); }
+  function num(v){ var n = parseFloat(String(v||"").replace(/[^0-9.]/g,"")); return isFinite(n) && n>0 ? n : 0; }
+  function save(){ try{ localStorage.setItem(KEY2, JSON.stringify(book)); }catch(e){} }
+
+  // Card colours by name. Specific cards first, then the bank's brand colour.
+  var BRANDS = [
+    [/infinia/i,"#1c1c1e"],[/diners/i,"#1f2430"],[/magnus/i,"#5e1a2e"],[/atlas/i,"#1e2a44"],
+    [/amazon/i,"#232f3e"],[/flipkart/i,"#2874f0"],[/swiggy/i,"#fc8019"],[/tata|neu\b/i,"#4b1e78"],
+    [/airtel/i,"#e40000"],[/one ?card/i,"#1a1a1a"],[/scapia/i,"#5b3cc4"],[/slice/i,"#6a3de8"],
+    [/hdfc/i,"#004c8f"],[/sbi/i,"#22409a"],[/icici/i,"#b02a30"],[/axis/i,"#97144d"],[/kotak/i,"#ed1c24"],
+    [/amex|american express/i,"#006fcf"],[/idfc/i,"#9c1d26"],[/\bau\b/i,"#6d2077"],[/\byes\b/i,"#0054a6"],
+    [/indusind/i,"#98272a"],[/rbl/i,"#21409a"],[/hsbc/i,"#db0011"],[/standard|stanchart|\bsc\b/i,"#0473ea"],
+    [/federal/i,"#f7a800"],[/baroda|\bbob\b/i,"#f15a22"],[/citi/i,"#003b70"]
+  ];
+  var FALLBACK = ["#3a4656","#2f5d50","#5a4a7a","#7a4b2e","#2e5a7a","#6b3a4a"];
+  function colourFor(c){
+    if(c.color) return c.color;
+    var n = c.name||"";
+    for(var i=0;i<BRANDS.length;i++){ if(BRANDS[i][0].test(n)) return BRANDS[i][1]; }
+    var h=0; for(var j=0;j<n.length;j++){ h=(h*31+n.charCodeAt(j))|0; }
+    return FALLBACK[Math.abs(h)%FALLBACK.length];
+  }
+  function inkFor(hex){
+    var v = parseInt(hex.slice(1),16), ch = [(v>>16)&255,(v>>8)&255,v&255].map(function(x){ x/=255; return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4); });
+    var L = .2126*ch[0]+.7152*ch[1]+.0722*ch[2];
+    return L > .4 ? "#16202b" : "#ffffff";
+  }
+  function paint(el,c){ var bg = colourFor(c); el.style.setProperty("--tbg",bg); el.style.setProperty("--tfg",inkFor(bg));
+    var pick = el.querySelector(".dot input"); if(pick) pick.value = bg; }
+
+  // Rent comes off first. Paid cards are locked at what was paid. The rest is planned on what remains.
+  function plan(){
+    var money = num(state.money), hasMoney = String(state.money||"").trim() !== "";
+    var rent = num(state.rent.amt), rentPaid = !!state.rent.paid && rent>0;
+    var paidCards = 0;
+    var items = [];
+    var res = {};
+    state.cards.forEach(function(c){
+      var t = num(c.total), m = Math.min(num(c.min), t);
+      if(c.paid){ var pa = num(c.paidAmt); paidCards += pa; res[c.id] = {status:"paid", pay:pa}; return; }
+      res[c.id] = {status:t>0?"wait":"none", pay:0, swapped:num(c.min)>t && t>0};
+      if(t>0) items.push({id:c.id, total:t, min:m, extra:t-m});
+    });
+    var sumMin = items.reduce(function(s,i){return s+i.min;},0);
+    var sumTot = items.reduce(function(s,i){return s+i.total;},0);
+    var avail = money - rent - paidCards;
+    var planned = 0, kind = "idle", text = "Enter money you have.";
+
+    if(hasMoney && avail < 0 && money < rent){
+      kind="bad"; text="Money doesn't cover rent. Short by " + rs(rent-money) + ".";
+      items.forEach(function(i){ res[i.id].status="short"; });
+    } else if(hasMoney && items.length){
+      var budget = Math.max(avail,0);
+      if(budget >= sumMin){
+        var left = budget - sumMin, best = [], bestSum = 0;
+        var up = items.filter(function(i){return i.extra>0;});
+        if(up.length <= 16){
+          var n = up.length, total = 1<<n;
+          for(var mask=0; mask<total; mask++){
+            var s=0, pick=[];
+            for(var b=0;b<n;b++){ if(mask & (1<<b)){ s+=up[b].extra; pick.push(up[b].id); } }
+            if(s<=left+1e-9 && (s>bestSum+1e-9 || (Math.abs(s-bestSum)<1e-9 && pick.length>best.length))){ bestSum=s; best=pick; }
+          }
+        } else {
+          up.slice().sort(function(a,b){return b.extra-a.extra;}).forEach(function(i){ if(bestSum+i.extra<=left+1e-9){ bestSum+=i.extra; best.push(i.id);} });
+        }
+        items.forEach(function(i){
+          var full = i.extra===0 || best.indexOf(i.id)>-1;
+          res[i.id].status = full ? "full" : "min";
+          res[i.id].pay = full ? i.total : i.min;
+          planned += res[i.id].pay;
+        });
+        if(budget >= sumTot){ kind="ok"; text="Pay every remaining card in full."; }
+        else { var nf = items.filter(function(i){return res[i.id].status==="full";}).length;
+          kind="mid"; text = nf ? "Pay full on " + nf + " card" + (nf>1?"s":"") + ", minimum on the rest." : "Pay minimum on remaining cards."; }
+      } else {
+        var rem = budget;
+        items.slice().sort(function(a,b){return a.min-b.min;}).forEach(function(i){
+          if(i.min<=rem+1e-9){ rem-=i.min; res[i.id].status="min"; res[i.id].pay=i.min; planned+=i.min; }
+          else { res[i.id].status="short"; }
+        });
+        kind="bad"; text="Short by " + rs(sumMin-budget) + " for all minimums.";
+      }
+    } else if(hasMoney){
+      if(state.cards.length && !items.length && state.cards.some(function(c){return c.paid;})){ kind="ok"; text="All cards paid."; }
+      else text = "Add card amounts below.";
+    }
+
+    var toPay = planned + (rentPaid ? 0 : rent);
+    var paid = paidCards + (rentPaid ? rent : 0);
+    return {res:res, toPay:toPay, paid:paid, left:hasMoney?Math.max(money-rent-paidCards-planned,0):0,
+            rent:rent, sumMin:sumMin, sumTot:sumTot, kind:kind, text:text, hasMoney:hasMoney};
+  }
+
+  function showMonth(){
+    var ks = keys(), i = ks.indexOf(book.cur);
+    $("month").textContent = labelOf(book.cur);
+    $("prevM").disabled = i<=0; $("nextM").disabled = i>=ks.length-1;
+    $("delMonth").hidden = ks.length<2;
+    $("money").value = state.money||"";
+    $("rentAmt").value = state.rent.amt||"";
+  }
+  function go(k){ book.cur=k; state=book.months[k]; disarm(); save(); showMonth(); render(); }
+  $("prevM").addEventListener("click", function(){ var ks=keys(), i=ks.indexOf(book.cur); if(i>0) go(ks[i-1]); });
+  $("nextM").addEventListener("click", function(){ var ks=keys(), i=ks.indexOf(book.cur); if(i<ks.length-1) go(ks[i+1]); });
+
+  function render(){
+    var wrap = $("cards"); wrap.innerHTML = "";
+    state.cards.forEach(function(c){
+      var el = document.createElement("div"); el.className="tile card"+(c.paid?" paid":""); el.dataset.id=c.id;
+      el.innerHTML =
+        '<div class="ttop"><input class="name" id="name-'+c.id+'" aria-label="Card name" placeholder="Card name" autocomplete="off">'+
+        '<label class="dot" title="Change colour"><input type="color" id="col-'+c.id+'" aria-label="Card colour"></label>'+
+        '<button class="del" type="button" aria-label="Remove card">×</button></div>'+
+        (c.paid
+          ? '<div class="tf"><label for="pa-'+c.id+'">Paid</label><input id="pa-'+c.id+'" inputmode="decimal" placeholder="0" autocomplete="off"></div>'+
+            '<div class="tf"><label>Total</label><input value="'+(c.total||"")+'" disabled aria-label="Total due"></div>'
+          : '<div class="tf"><label for="min-'+c.id+'">Min</label><input id="min-'+c.id+'" inputmode="decimal" placeholder="0" autocomplete="off"></div>'+
+            '<div class="tf"><label for="tot-'+c.id+'">Total</label><input id="tot-'+c.id+'" inputmode="decimal" placeholder="0" autocomplete="off"></div>')+
+        '<div class="warn" hidden>Min above total. Using total.</div>'+
+        '<div class="tbot"><span class="chip c-none">—</span>'+
+        '<button class="tick" type="button" aria-pressed="'+(c.paid?"true":"false")+'">'+(c.paid?"✓ Paid":"Paid")+'</button></div>';
+      el.querySelector("#name-"+c.id).value = c.name||"";
+      if(c.paid){ el.querySelector("#pa-"+c.id).value = c.paidAmt||""; }
+      else { el.querySelector("#min-"+c.id).value = c.min||""; el.querySelector("#tot-"+c.id).value = c.total||""; }
+      paint(el,c);
+      wrap.appendChild(el);
+    });
+    update();
+  }
+
+  function update(){
+    var p = plan();
+    $("toPay").textContent = p.hasMoney ? rs(p.toPay) : "—";
+    $("paidSum").textContent = rs(p.paid);
+    $("leftOver").textContent = p.hasMoney ? rs(p.left) : "—";
+    $("sumRent").textContent = rs(p.rent);
+    $("sumMin").textContent = rs(p.sumMin);
+    $("sumTot").textContent = rs(p.sumTot);
+    var m = $("msg"); m.className = "msg " + p.kind; m.textContent = p.text;
+    $("exampleNote").hidden = !state.example;
+
+    var rp = !!state.rent.paid, rc = $("rentChip"), rt = $("rentTick");
+    $("rentRow").classList.toggle("paid", rp);
+    rt.setAttribute("aria-pressed", rp?"true":"false"); rt.textContent = rp ? "✓ Paid" : "Paid";
+    if(rp){ rc.className="chip c-paid"; rc.textContent="Paid " + rs(p.rent); }
+    else if(p.rent>0){ rc.className="chip c-min"; rc.textContent="Pay " + rs(p.rent); }
+    else { rc.className="chip c-none"; rc.textContent="—"; }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".card"), function(el){
+      var r = p.res[el.dataset.id], chip = el.querySelector(".chip");
+      el.querySelector(".warn").hidden = !r.swapped;
+      var map = {full:["c-full","Full "+rs(r.pay)], min:["c-min","Min "+rs(r.pay)], short:["c-short","Can't pay"],
+                 none:["c-none","—"], wait:["c-none","Enter money"], paid:["c-paid","Paid "+rs(r.pay)]};
+      var v = map[r.status]; chip.className = "chip " + v[0]; chip.textContent = v[1];
+    });
+  }
+
+  function touched(){ if(state.example){ state.example=false; } save(); update(); }
+
+  $("money").addEventListener("input", function(e){ state.money = e.target.value; touched(); });
+  $("rentAmt").addEventListener("input", function(e){ state.rent.amt = e.target.value; touched(); });
+  $("rentTick").addEventListener("click", function(){ state.rent.paid = !state.rent.paid; touched(); });
+
+  function cardOf(el){ var row = el.closest(".card"); if(!row) return null;
+    return state.cards.find(function(x){return String(x.id)===row.dataset.id;}); }
+
+  $("cards").addEventListener("input", function(e){
+    var c = cardOf(e.target); if(!c) return;
+    var id = e.target.id;
+    if(id.indexOf("name-")===0){ c.name = e.target.value; paint(e.target.closest(".card"),c); }
+    else if(id.indexOf("col-")===0){ c.color = e.target.value; paint(e.target.closest(".card"),c); }
+    else if(id.indexOf("min-")===0) c.min = e.target.value;
+    else if(id.indexOf("tot-")===0) c.total = e.target.value;
+    else if(id.indexOf("pa-")===0) c.paidAmt = e.target.value;
+    touched();
+  });
+  $("cards").addEventListener("click", function(e){
+    var t = e.target.closest(".tick");
+    if(t){
+      var c = cardOf(t); if(!c) return;
+      if(!c.paid){
+        // Lock in what the plan says now. Edit the paid amount if you paid something else.
+        var r = plan().res[c.id];
+        var amt = r && r.pay>0 ? r.pay : (num(c.total) || num(c.min));
+        c.paid = true; c.paidAmt = amt ? String(Math.round(amt*100)/100) : "";
+      } else { c.paid = false; }
+      state.example=false; save(); render(); return;
+    }
+    var d = e.target.closest(".del"); if(!d) return;
+    var id = d.closest(".card").dataset.id;
+    state.cards = state.cards.filter(function(x){return String(x.id)!==id;});
+    state.example=false; save(); render();
+  });
+
+  $("add").addEventListener("click", function(){
+    var id = nextId++;
+    state.cards.push({id:id,name:"",min:"",total:""});
+    state.example=false; save(); render();
+    var f = document.getElementById("name-"+id); if(f) f.focus();
+  });
+
+  $("newMonth").addEventListener("click", function(){
+    var ks = keys(), last = ks[ks.length-1], src = book.months[last], k = shiftKey(last,1);
+    book.months[k] = {money:"", example:false, rent:{amt:(src.rent&&src.rent.amt)||"", paid:false},
+      cards: src.cards.map(function(c){ return {id:nextId++, name:c.name, color:c.color, min:"", total:""}; })};
+    go(k);
+  });
+
+  var armed=false, armTimer=null;
+  function disarm(){ clearTimeout(armTimer); armed=false; var b=$("delMonth"); b.classList.remove("danger"); b.textContent="Delete this month"; }
+  $("delMonth").addEventListener("click", function(){
+    var ks = keys(); if(ks.length<2) return;
+    if(!armed){ armed=true; var b=$("delMonth"); b.classList.add("danger"); b.textContent="Tap again to delete "+labelOf(book.cur); armTimer=setTimeout(disarm,3000); return; }
+    var i = ks.indexOf(book.cur); delete book.months[book.cur];
+    var rest = keys(); go(rest[Math.max(0,Math.min(i-1,rest.length-1))]);
+  });
+
+  showMonth();
+  render();
+})();
+</script>
+
+</body>
+</html>
