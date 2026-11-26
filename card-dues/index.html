@@ -119,6 +119,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .note{font-size:.72rem;color:var(--muted);margin:0}
 .linkbtn{background:none;border:0;color:var(--muted);font-family:var(--f-body);font-size:.75rem;text-decoration:underline;cursor:pointer;padding:4px}
 .linkbtn.danger{color:var(--short)}
+.bk{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.bk p{margin:0;font-size:.78rem;color:var(--muted)}
+.bk textarea{width:100%;box-sizing:border-box;min-height:80px;font-family:var(--f-num);font-size:.72rem;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);resize:vertical}
+.bk .actions button.btn{padding:8px;font-size:.85rem}
+.bk .status{font-size:.78rem;font-weight:600;min-height:1em}
+.bk .status.ok{color:var(--full)} .bk .status.bad{color:var(--short)}
 .example{font-size:.76rem;color:var(--min);background:var(--min-bg);padding:6px 8px;border-radius:6px}
 </style>
 </head>
@@ -163,8 +169,18 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
   <div class="foot">
     <p class="note">Saved on this phone only. Colours set from card name. Tap the dot to change.</p>
+    <button class="linkbtn" id="bkToggle" type="button" aria-expanded="false" aria-controls="bk">Backup / Restore</button>
     <button class="linkbtn" id="delMonth" type="button">Delete this month</button>
   </div>
+  <section class="bk" id="bk" hidden>
+    <p><b>Backup:</b> tap Copy my data, then paste it somewhere safe or into the other page.<br><b>Restore:</b> paste backup text in the box, then tap Load. This replaces what is on this page.</p>
+    <textarea id="bkText" aria-label="Backup text" placeholder="Backup text shows here, or paste one to restore" spellcheck="false"></textarea>
+    <div class="actions">
+      <button class="btn" id="bkCopy" type="button">Copy my data</button>
+      <button class="btn primary" id="bkLoad" type="button">Load pasted data</button>
+    </div>
+    <div class="status" id="bkStatus" aria-live="polite"></div>
+  </section>
 </div>
 
 <script>
@@ -416,6 +432,41 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     if(!armed){ armed=true; var b=$("delMonth"); b.classList.add("danger"); b.textContent="Tap again to delete "+labelOf(book.cur); armTimer=setTimeout(disarm,3000); return; }
     var i = ks.indexOf(book.cur); delete book.months[book.cur];
     var rest = keys(); go(rest[Math.max(0,Math.min(i-1,rest.length-1))]);
+  });
+
+  // Backup / Restore
+  function fixBook(b){
+    Object.keys(b.months).forEach(function(k){ var m=b.months[k];
+      if(!m.rent) m.rent={amt:"",paid:false}; if(!Array.isArray(m.cards)) m.cards=[]; });
+    if(!b.months[b.cur]) b.cur = Object.keys(b.months).sort().pop();
+    return b;
+  }
+  function bkSay(t,ok){ var el=$("bkStatus"); el.textContent=t; el.className="status "+(ok?"ok":"bad"); }
+  $("bkToggle").addEventListener("click", function(){
+    var open = $("bk").hidden; $("bk").hidden = !open; this.setAttribute("aria-expanded", open?"true":"false");
+    if(open){ $("bkText").value=""; bkSay("",true); }
+  });
+  $("bkCopy").addEventListener("click", function(){
+    var t = JSON.stringify(book), ta = $("bkText"); ta.value = t;
+    function fallback(){ ta.focus(); ta.select(); bkSay("Text selected. Long-press and Copy.", true); }
+    try{
+      navigator.clipboard.writeText(t).then(function(){ bkSay("Copied. Now open the other page and paste in Restore.", true); }, fallback);
+    }catch(e){ fallback(); }
+  });
+  var loadArmed=false, loadTimer=null;
+  $("bkLoad").addEventListener("click", function(){
+    var b;
+    try{ b = JSON.parse($("bkText").value.trim()); }catch(e){ b=null; }
+    if(!b || typeof b!=="object" || !b.months || typeof b.months!=="object" || !Object.keys(b.months).length){
+      bkSay("That text is not a backup from this page. Copy it again and paste the whole thing.", false); return; }
+    var btn=$("bkLoad");
+    if(!loadArmed){ loadArmed=true; btn.textContent="Tap again to replace"; loadTimer=setTimeout(function(){loadArmed=false;btn.textContent="Load pasted data";},4000); return; }
+    clearTimeout(loadTimer); loadArmed=false; btn.textContent="Load pasted data";
+    book = fixBook(b);
+    nextId = Object.keys(book.months).reduce(function(m,k){
+      return book.months[k].cards.reduce(function(mm,c){return Math.max(mm,c.id||0);},m);},0)+1;
+    go(book.cur);
+    bkSay("Loaded " + Object.keys(book.months).length + " month(s).", true);
   });
 
   showMonth();
